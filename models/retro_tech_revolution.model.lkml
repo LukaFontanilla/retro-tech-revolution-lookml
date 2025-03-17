@@ -3,6 +3,7 @@ connection: "default_bigquery_connection"
 
 # include all the views
 include: "/views/**/*.view.lkml"
+include: "/views/wip/*.view.lkml"
 
 # Datagroups define a caching policy for an Explore. To learn more,
 # use the Quick Help panel on the right to see documentation.
@@ -30,5 +31,13 @@ explore: v_all_events {
     type: inner
     relationship: many_to_one
     sql_on: ${v_all_events.session_id} = ${session_start_end.v_all_events_session_id} AND ${v_all_events.client_id} = ${session_start_end.v_all_events_client_id} ;;
+  }
+}
+
+explore: sessions {
+  join: events {
+    type: left_outer
+    sql_on: ${sessions.session_id} = ${events.session_id} ;;
+    relationship: one_to_many
   }
 }
