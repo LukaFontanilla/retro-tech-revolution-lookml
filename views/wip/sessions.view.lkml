@@ -36,10 +36,28 @@ view: sessions {
     # persist_for: "8 hours"
   }
 
+  parameter: selected_session {
+    suggest_dimension: session_id
+    label: "Selected Game Session"
+    type: string
+  }
+
+  dimension: selected_client_vs_rest {
+    type: string
+    description: "Use with parameter 'selected_session' to compare selected session against Average of the rest"
+    sql: CASE
+          WHEN ${session_id} = {% parameter selected_session %} THEN ${session_id}
+          ELSE 'Other'
+         END
+    ;;
+  }
+
   dimension: session_id {
     primary_key: yes
     type: string
     sql: ${TABLE}.session_id ;;
+    # html: {% if selected_session._parameter_value === value %}
+    #         ;;
     description: "Unique identifier for the game session"
     label: "Session ID"
   }
