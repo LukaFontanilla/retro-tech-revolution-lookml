@@ -9,7 +9,8 @@ looker.plugins.visualizations.add({
       display: "select",
       values: [
         {"Time": "time"},
-        {"Rank": "rank"}
+        {"Rank": "rank"},
+        {"Enemies Defeated": "enemies"}
       ],
       default: "time"
     },
@@ -124,6 +125,8 @@ looker.plugins.visualizations.add({
 
     if (indicatorType === "rank") {
       defaultColor = "#4CAF50"; // Green for rank
+    } else if (indicatorType === "enemies") {
+      defaultColor = "#E53935"; // Red for enemies defeated
     }
 
     // Apply configuration options with appropriate defaults

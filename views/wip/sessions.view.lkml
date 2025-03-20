@@ -13,7 +13,7 @@ view: sessions {
         , SECOND) / 60.0 AS session_duration_minutes,
         MAX(CAST(score AS NUMERIC)) AS max_score,
         MAX(CAST(player_points AS NUMERIC)) AS max_player_points,
-        COUNTIF(event_type = 'on_enemy_health_depleted') AS enemies_defeated,
+        COUNTIF(CAST(enemy_health AS NUMERIC) = 0) AS enemies_defeated,
         COUNTIF(event_type = 'on_player_health_depleted') AS player_deaths,
         COUNTIF(event_type IN ('on_gemini_help_requested', 'on_received_gemini_help')) AS gemini_help_interactions,
         COUNTIF(event_type IN ('on_gemini_backstory_requested', 'on_gemini_backstory_text_received',
