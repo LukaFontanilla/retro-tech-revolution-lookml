@@ -54,22 +54,27 @@ looker.plugins.visualizations.add({
       <style>
         .status-indicator-container {
           height: 100%;
+          width: 100%;
           display: flex;
           justify-content: center;
           align-items: center;
+          padding: 8px;
+          box-sizing: border-box;
         }
         .status-indicator {
           display: flex;
           align-items: center;
+          justify-content: center;
           padding: 10px 20px;
           border-radius: 10px;
           border: 2px solid #F2B01E;
           background-color: white;
+          width: 100%;
+          height: 100%;
+          box-sizing: border-box;
         }
         .status-icon {
           margin-right: 15px;
-          width: 24px;
-          height: 24px;
           background-color: #F2B01E;
           mask-size: contain;
           mask-repeat: no-repeat;
@@ -77,12 +82,17 @@ looker.plugins.visualizations.add({
           -webkit-mask-size: contain;
           -webkit-mask-repeat: no-repeat;
           -webkit-mask-position: center;
+          /* Icon will scale with font size */
+          width: 1em;
+          height: 1em;
         }
         .status-value {
           font-size: 28px;
           font-weight: bold;
           color: #F2B01E;
           font-family: Arial, sans-serif;
+          display: flex;
+          align-items: center;
         }
       </style>
       <div class="status-indicator-container">
@@ -119,13 +129,17 @@ looker.plugins.visualizations.add({
     // Apply configuration options with appropriate defaults
     const fontColor = config.font_color || defaultColor;
     const borderColor = config.border_color || defaultColor;
+    const fontSize = config.font_size || "28px";
 
     this.indicator.style.borderRadius = `${config.border_radius || 10}px`;
     this.indicator.style.borderColor = borderColor;
     this.indicator.style.backgroundColor = config.background_color || "#FFFFFF";
     this.value.style.color = fontColor;
-    this.value.style.fontSize = config.font_size || "28px";
+    this.value.style.fontSize = fontSize;
     this.icon.style.backgroundColor = fontColor;
+
+    // Make both the value and icon use the same font size for proportional scaling
+    this.value.parentNode.style.fontSize = fontSize;
 
     // Set the appropriate icon based on indicator type
     if (indicatorType === "time") {
