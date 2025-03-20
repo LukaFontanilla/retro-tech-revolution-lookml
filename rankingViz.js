@@ -86,6 +86,7 @@ looker.plugins.visualizations.add({
           /* Icon will scale with font size */
           width: 1em;
           height: 1em;
+          flex-shrink: 0;
         }
         .status-value {
           font-size: 28px;
@@ -142,21 +143,40 @@ looker.plugins.visualizations.add({
     this.icon.style.backgroundColor = fontColor;
 
     // Make both the value and icon use the same font size for proportional scaling
-    this.value.parentNode.style.fontSize = fontSize;
+    this.indicator.style.fontSize = fontSize;
+
+    // Clock icon SVG - simpler version
+    const clockIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm-1-13v5h5v2h-7V7h2z"/></svg>`;
+
+    // Star icon SVG - simpler version
+    const starIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3.1 6.3 6.9.9-5 4.9 1.2 6.9-6.2-3.3-6.2 3.3 1.2-6.9-5-4.9 6.9-.9z"/></svg>`;
+
+    // Robot icon SVG
+    const robotIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22 14h-1c0-3.9-3.1-7-7-7h-4c-3.9 0-7 3.1-7 7h-1c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h1v1c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-1h1c1.1 0 2-.9 2-2v-2c0-1.1-.9-2-2-2zm-15 0c0-2.8 2.2-5 5-5h4c2.8 0 5 2.2 5 5v2h-14v-2zm-2 4h18v2h-18v-2zm7-14c-1.7 0-3 1.3-3 3h2c0-.6.4-1 1-1s1 .4 1 1h2c0-1.7-1.3-3-3-3zm6 3c0-1.7-1.3-3-3-3v2c.6 0 1 .4 1 1h2z"/><circle cx="9" cy="14" r="1"/><circle cx="15" cy="14" r="1"/></svg>`;
 
     // Set the appropriate icon based on indicator type
+    let iconSvg;
     if (indicatorType === "time") {
-      // Clock icon
-      this.icon.style.maskImage = "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12 12-5.383 12-12S18.617 0 12 0zm0 22c-5.514 0-10-4.486-10-10S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10zm-1-10V4h2v7h5v2h-7z\"/></svg>')";
-      this.icon.style.webkitMaskImage = "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12 12-5.383 12-12S18.617 0 12 0zm0 22c-5.514 0-10-4.486-10-10S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10zm-1-10V4h2v7h5v2h-7z\"/></svg>')";
-    } else {
-      // Star icon
-      this.icon.style.maskImage = "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M12,1.5l2.61,6.727,6.89.53-5.278,4.688,1.65,6.787L12,16.67,6.129,20.23l1.65-6.788L2.5,8.757l6.891-.53Z\"/></svg>')";
-      this.icon.style.webkitMaskImage = "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M12,1.5l2.61,6.727,6.89,.53-5.278,4.688,1.65,6.787L12,16.67,6.129,20.23l1.65-6.788L2.5,8.757l6.891-.53Z\"/></svg>')";
+      iconSvg = clockIcon;
+    } else if (indicatorType === "rank") {
+      iconSvg = starIcon;
+    } else if (indicatorType === "enemies") {
+      iconSvg = robotIcon;
     }
 
+    // Set the icon as a data URL
+    const dataUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(iconSvg)}`;
+    this.icon.style.maskImage = `url('${dataUrl}')`;
+    this.icon.style.webkitMaskImage = `url('${dataUrl}')`;
+
     // Get the value from the data
-    const value = data[0][queryResponse.fields.measure_like[0].name].value;
+    let value;
+    try {
+      value = data[0][queryResponse.fields.measure_like[0].name].value;
+    } catch (e) {
+      console.error("Error accessing data value:", e);
+      value = "Error";
+    }
 
     // Format the value based on indicator type
     let formattedValue = '';
@@ -173,7 +193,7 @@ looker.plugins.visualizations.add({
       formattedValue = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${milliseconds.toString().padStart(3, '0')}`;
     } else {
       // For rank or non-numeric values, just convert to string
-      formattedValue = value.toString();
+      formattedValue = value !== undefined ? value.toString() : "N/A";
     }
 
     this.value.textContent = formattedValue;
