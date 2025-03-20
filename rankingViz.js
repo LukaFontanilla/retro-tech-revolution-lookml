@@ -1,96 +1,18 @@
-// First Visualization: Time Indicator (Yellow)
-const timeIndicatorOptions = {
-  chart: {
-    type: 'bar',
-    height: 80,
-    backgroundColor: 'transparent',
-    margin: [0, 0, 0, 0],
-    spacing: [0, 0, 0, 0]
-  },
-  title: {
-    text: null
-  },
-  credits: {
-    enabled: false
-  },
-  tooltip: {
-    enabled: false
-  },
-  legend: {
-    enabled: false
-  },
-  xAxis: {
-    visible: false
-  },
-  yAxis: {
-    visible: false
-  },
-  plotOptions: {
-    series: {
-      animation: false,
-      states: {
-        hover: {
-          enabled: false
-        }
-      }
-    }
-  },
-  series: [{
-    data: [],
-    showInLegend: false,
-    enableMouseTracking: false
-  }]
-};
-
-// Second Visualization: Star Rank Indicator (Green)
-const starRankOptions = {
-  chart: {
-    type: 'bar',
-    height: 80,
-    backgroundColor: 'transparent',
-    margin: [0, 0, 0, 0],
-    spacing: [0, 0, 0, 0]
-  },
-  title: {
-    text: null
-  },
-  credits: {
-    enabled: false
-  },
-  tooltip: {
-    enabled: false
-  },
-  legend: {
-    enabled: false
-  },
-  xAxis: {
-    visible: false
-  },
-  yAxis: {
-    visible: false
-  },
-  plotOptions: {
-    series: {
-      animation: false,
-      states: {
-        hover: {
-          enabled: false
-        }
-      }
-    }
-  },
-  series: [{
-    data: [],
-    showInLegend: false,
-    enableMouseTracking: false
-  }]
-};
-
-// Looker Custom Visualization for Time Indicator
+// Combined Status Indicator Visualization for Looker
 looker.plugins.visualizations.add({
-  id: "time_indicator",
-  label: "Time Indicator",
+  id: "status_indicator",
+  label: "Status Indicator",
   options: {
+    indicator_type: {
+      type: "string",
+      label: "Indicator Type",
+      display: "select",
+      values: [
+        {"Time": "time"},
+        {"Rank": "rank"}
+      ],
+      default: "time"
+    },
     font_size: {
       type: "string",
       label: "Font Size",
@@ -99,40 +21,44 @@ looker.plugins.visualizations.add({
     font_color: {
       type: "string",
       label: "Font Color",
-      default: "#F2B01E"
+      default: "#F2B01E", // Default to yellow (time)
+      display_size: "half"
     },
     background_color: {
       type: "string",
       label: "Background Color",
-      default: "#FFFFFF"
+      default: "#FFFFFF",
+      display_size: "half"
     },
     border_color: {
       type: "string",
       label: "Border Color",
-      default: "#F2B01E"
+      default: "#F2B01E", // Default to yellow (time)
+      display_size: "half"
     },
     border_radius: {
       type: "number",
       label: "Border Radius",
-      default: 10
+      default: 10,
+      display_size: "half"
     },
-    icon: {
+    custom_value_format: {
       type: "string",
-      label: "Icon Type",
-      default: "clock"
+      label: "Custom Value Format (blank for default)",
+      default: "",
     }
   },
-  
+
   create: function(element, config) {
     element.innerHTML = `
       <style>
-        .time-indicator-container {
+        .status-indicator-container {
           height: 100%;
           display: flex;
           justify-content: center;
           align-items: center;
         }
-        .time-indicator {
+        .status-indicator {
           display: flex;
           align-items: center;
           padding: 10px 20px;
@@ -140,7 +66,7 @@ looker.plugins.visualizations.add({
           border: 2px solid #F2B01E;
           background-color: white;
         }
-        .time-icon {
+        .status-icon {
           margin-right: 15px;
           width: 24px;
           height: 24px;
@@ -152,174 +78,89 @@ looker.plugins.visualizations.add({
           -webkit-mask-repeat: no-repeat;
           -webkit-mask-position: center;
         }
-        .time-value {
+        .status-value {
           font-size: 28px;
           font-weight: bold;
           color: #F2B01E;
           font-family: Arial, sans-serif;
         }
       </style>
-      <div class="time-indicator-container">
-        <div class="time-indicator">
-          <div class="time-icon"></div>
-          <div class="time-value"></div>
+      <div class="status-indicator-container">
+        <div class="status-indicator">
+          <div class="status-icon"></div>
+          <div class="status-value"></div>
         </div>
       </div>
     `;
-    
-    this.container = element.querySelector('.time-indicator-container');
-    this.indicator = element.querySelector('.time-indicator');
-    this.icon = element.querySelector('.time-icon');
-    this.value = element.querySelector('.time-value');
+
+    this.container = element.querySelector('.status-indicator-container');
+    this.indicator = element.querySelector('.status-indicator');
+    this.icon = element.querySelector('.status-icon');
+    this.value = element.querySelector('.status-value');
   },
-  
+
   updateAsync: function(data, element, config, queryResponse, details, done) {
     if (!data || data.length === 0) {
       this.value.textContent = "No data";
       done();
       return;
     }
-    
-    // Apply configuration options
+
+    // Determine indicator type and set colors appropriately
+    const indicatorType = config.indicator_type || "time";
+
+    // Set default colors based on indicator type
+    let defaultColor = "#F2B01E"; // Yellow for time
+
+    if (indicatorType === "rank") {
+      defaultColor = "#4CAF50"; // Green for rank
+    }
+
+    // Apply configuration options with appropriate defaults
+    const fontColor = config.font_color || defaultColor;
+    const borderColor = config.border_color || defaultColor;
+
     this.indicator.style.borderRadius = `${config.border_radius || 10}px`;
-    this.indicator.style.borderColor = config.border_color || "#F2B01E";
+    this.indicator.style.borderColor = borderColor;
     this.indicator.style.backgroundColor = config.background_color || "#FFFFFF";
-    this.value.style.color = config.font_color || "#F2B01E";
+    this.value.style.color = fontColor;
     this.value.style.fontSize = config.font_size || "28px";
-    this.icon.style.backgroundColor = config.font_color || "#F2B01E";
-    
-    // Set the icon
-    const iconType = config.icon || "clock";
-    if (iconType === "clock") {
+    this.icon.style.backgroundColor = fontColor;
+
+    // Set the appropriate icon based on indicator type
+    if (indicatorType === "time") {
+      // Clock icon
       this.icon.style.maskImage = "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12 12-5.383 12-12S18.617 0 12 0zm0 22c-5.514 0-10-4.486-10-10S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10zm-1-10V4h2v7h5v2h-7z\"/></svg>')";
       this.icon.style.webkitMaskImage = "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12 12-5.383 12-12S18.617 0 12 0zm0 22c-5.514 0-10-4.486-10-10S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10zm-1-10V4h2v7h5v2h-7z\"/></svg>')";
-    }
-    
-    // Get the time value from the data
-    const time = data[0][queryResponse.fields.measure_like[0].name].value;
-    
-    // Format time in seconds to MM:SS.000 format
-    let formattedTime = '';
-    if (typeof time === 'number') {
-      const minutes = Math.floor(time / 60);
-      const seconds = Math.floor(time % 60);
-      const milliseconds = Math.floor((time % 1) * 1000);
-      
-      formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${milliseconds.toString().padStart(3, '0')}`;
     } else {
-      formattedTime = time.toString();
+      // Star icon
+      this.icon.style.maskImage = "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M12,1.5l2.61,6.727,6.89.53-5.278,4.688,1.65,6.787L12,16.67,6.129,20.23l1.65-6.788L2.5,8.757l6.891-.53Z\"/></svg>')";
+      this.icon.style.webkitMaskImage = "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M12,1.5l2.61,6.727,6.89,.53-5.278,4.688,1.65,6.787L12,16.67,6.129,20.23l1.65-6.788L2.5,8.757l6.891-.53Z\"/></svg>')";
     }
-    
-    this.value.textContent = formattedTime;
-    
-    done();
-  }
-});
 
-// Looker Custom Visualization for Star Rank Indicator
-looker.plugins.visualizations.add({
-  id: "star_rank_indicator",
-  label: "Star Rank Indicator",
-  options: {
-    font_size: {
-      type: "string",
-      label: "Font Size",
-      default: "28px"
-    },
-    font_color: {
-      type: "string",
-      label: "Font Color",
-      default: "#4CAF50" // Green
-    },
-    background_color: {
-      type: "string",
-      label: "Background Color",
-      default: "#FFFFFF"
-    },
-    border_color: {
-      type: "string",
-      label: "Border Color",
-      default: "#4CAF50" // Green
-    },
-    border_radius: {
-      type: "number",
-      label: "Border Radius",
-      default: 10
+    // Get the value from the data
+    const value = data[0][queryResponse.fields.measure_like[0].name].value;
+
+    // Format the value based on indicator type
+    let formattedValue = '';
+
+    if (config.custom_value_format) {
+      // Use custom format if provided
+      formattedValue = config.custom_value_format.replace(/\{value\}/g, value);
+    } else if (indicatorType === "time" && typeof value === 'number') {
+      // Format time in seconds to MM:SS.SSS format
+      const minutes = Math.floor(value / 60);
+      const seconds = Math.floor(value % 60);
+      const milliseconds = Math.floor((value % 1) * 1000);
+
+      formattedValue = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${milliseconds.toString().padStart(3, '0')}`;
+    } else {
+      // For rank or non-numeric values, just convert to string
+      formattedValue = value.toString();
     }
-  },
-  
-  create: function(element, config) {
-    element.innerHTML = `
-      <style>
-        .star-rank-container {
-          height: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-        .star-rank {
-          display: flex;
-          align-items: center;
-          padding: 10px 20px;
-          border-radius: 10px;
-          border: 2px solid #4CAF50;
-          background-color: white;
-        }
-        .star-icon {
-          margin-right: 15px;
-          width: 24px;
-          height: 24px;
-          background-color: #4CAF50;
-          mask-size: contain;
-          mask-repeat: no-repeat;
-          mask-position: center;
-          -webkit-mask-size: contain;
-          -webkit-mask-repeat: no-repeat;
-          -webkit-mask-position: center;
-          mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,1.5l2.61,6.727,6.89.53-5.278,4.688,1.65,6.787L12,16.67,6.129,20.23l1.65-6.788L2.5,8.757l6.891-.53Z"/></svg>');
-          -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,1.5l2.61,6.727,6.89.53-5.278,4.688,1.65,6.787L12,16.67,6.129,20.23l1.65-6.788L2.5,8.757l6.891-.53Z"/></svg>');
-        }
-        .rank-value {
-          font-size: 28px;
-          font-weight: bold;
-          color: #4CAF50;
-          font-family: Arial, sans-serif;
-        }
-      </style>
-      <div class="star-rank-container">
-        <div class="star-rank">
-          <div class="star-icon"></div>
-          <div class="rank-value"></div>
-        </div>
-      </div>
-    `;
-    
-    this.container = element.querySelector('.star-rank-container');
-    this.indicator = element.querySelector('.star-rank');
-    this.icon = element.querySelector('.star-icon');
-    this.value = element.querySelector('.rank-value');
-  },
-  
-  updateAsync: function(data, element, config, queryResponse, details, done) {
-    if (!data || data.length === 0) {
-      this.value.textContent = "No data";
-      done();
-      return;
-    }
-    
-    // Apply configuration options
-    this.indicator.style.borderRadius = `${config.border_radius || 10}px`;
-    this.indicator.style.borderColor = config.border_color || "#4CAF50";
-    this.indicator.style.backgroundColor = config.background_color || "#FFFFFF";
-    this.value.style.color = config.font_color || "#4CAF50";
-    this.value.style.fontSize = config.font_size || "28px";
-    this.icon.style.backgroundColor = config.font_color || "#4CAF50";
-    
-    // Get the rank value from the data
-    const rank = data[0][queryResponse.fields.measure_like[0].name].value;
-    
-    this.value.textContent = rank;
-    
+
+    this.value.textContent = formattedValue;
+
     done();
   }
 });
