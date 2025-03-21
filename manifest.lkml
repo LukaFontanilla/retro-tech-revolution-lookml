@@ -14,3 +14,10 @@ visualization: {
   file: "rankingViz.js"
   dependencies: []
 }
+
+visualization: {
+  id: "testing"
+  label: "testing"
+  file: "bundle.js"
+  dependencies: []
+}
