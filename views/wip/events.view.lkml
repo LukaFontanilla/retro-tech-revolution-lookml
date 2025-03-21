@@ -173,6 +173,7 @@ view: events {
   dimension: screenshot {
     type: string
     sql: ${TABLE}.screenshot ;;
+    html: <img src="{{value}}" width="100%" height="auto"/> ;;
     description: "Reference to screenshot taken during the event"
     label: "Screenshot"
   }

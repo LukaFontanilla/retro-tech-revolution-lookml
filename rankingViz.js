@@ -43,6 +43,12 @@ looker.plugins.visualizations.add({
       default: 10,
       display_size: "half"
     },
+    border_width: {
+      type: "number",
+      label: "Border Width",
+      default: 10,
+      display_size: "half"
+    }
     custom_value_format: {
       type: "string",
       label: "Custom Value Format (blank for default)",
@@ -136,6 +142,7 @@ looker.plugins.visualizations.add({
     const fontSize = config.font_size || "28px";
 
     this.indicator.style.borderRadius = `${config.border_radius || 10}px`;
+    this.indicator.style.borderWidth = config.border_width || "10px";
     this.indicator.style.borderColor = borderColor;
     this.indicator.style.backgroundColor = config.background_color || "#FFFFFF";
     this.value.style.color = fontColor;
