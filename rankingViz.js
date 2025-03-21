@@ -48,7 +48,7 @@ looker.plugins.visualizations.add({
       label: "Border Width",
       default: 10,
       display_size: "half"
-    }
+    },
     custom_value_format: {
       type: "string",
       label: "Custom Value Format (blank for default)",
