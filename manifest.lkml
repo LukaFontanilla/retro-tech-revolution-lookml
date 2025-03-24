@@ -16,8 +16,8 @@ visualization: {
 }
 
 visualization: {
-  id: "testing"
-  label: "testing"
+  id: "markdown-viz"
+  label: "Markdown Visualization"
   file: "bundle.js"
-  dependencies: []
+  dependencies: ["https://cdn.jsdelivr.net/npm/marked/marked.min.js"]
 }

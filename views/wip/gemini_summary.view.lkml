@@ -25,6 +25,7 @@ view: gemini_summary {
   dimension: summary_text {
     type: string
     sql: ${TABLE}.summary_text ;;
+    html: <div class="vis"><span style="text-wrap:auto;font-size:0.6em;">{{value}}</span></div> ;;
   }
   measure: count {
     type: count
