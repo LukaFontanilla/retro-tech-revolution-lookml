@@ -9,12 +9,6 @@ view: events {
     description: "Unique identifier for each game event"
   }
 
-  dimension: img {
-    type: string
-    sql: "gs://rtr_screenshots/1742445457.50303/1742445457.50303_screenshot_1742445468.png" ;;
-    html: <img src="{{value}}"/> ;;
-  }
-
   dimension_group: event {
     type: time
     timeframes: [raw, time, date, week, month, quarter, year, hour_of_day, day_of_week,second]
@@ -173,7 +167,7 @@ view: events {
   dimension: screenshot {
     type: string
     sql: ${TABLE}.screenshot ;;
-    html: <img src="{{value}}" width="100%" height="auto"/> ;;
+    html: <img src="data:image/jpeg;base64,{{value}}" width="100px" height="100px"/> ;;
     description: "Reference to screenshot taken during the event"
     label: "Screenshot"
   }

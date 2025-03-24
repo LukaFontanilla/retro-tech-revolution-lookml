@@ -40,4 +40,9 @@ explore: sessions {
     sql_on: ${sessions.session_id} = ${events.session_id} ;;
     relationship: one_to_many
   }
+  join: gemini_summary {
+    type: left_outer
+    sql_on: ${gemini_summary.session_id} = ${sessions.session_id} ;;
+    relationship: one_to_many
+  }
 }
