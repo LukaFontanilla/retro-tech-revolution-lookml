@@ -46,14 +46,14 @@ view: sessions {
   dimension: selected_client_vs_rest_bool {
     type: yesno
     hidden: yes
-    sql: ${session_id} = {% parameter selected_session %} ;;
+    sql: ${session_id} = "{% parameter selected_session %}" ;;
   }
 
   dimension: selected_client_vs_rest {
     type: string
     description: "Use with parameter 'selected_session' to compare selected session against Average of the rest"
     sql: CASE
-          WHEN ${session_id} = {% parameter selected_session %} THEN ${session_id}
+          WHEN ${session_id} = "{% parameter selected_session %}" THEN ${session_id}
           ELSE 'Other'
          END
     ;;
