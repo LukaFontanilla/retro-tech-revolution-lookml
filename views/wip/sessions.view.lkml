@@ -40,7 +40,7 @@ view: sessions {
   parameter: selected_session {
     suggest_dimension: session_id
     label: "Selected Game Session"
-    type: string
+    type: unquoted
   }
 
   dimension: selected_client_vs_rest_bool {
@@ -67,6 +67,21 @@ view: sessions {
     #         ;;
     description: "Unique identifier for the game session"
     label: "Session ID"
+  }
+
+  dimension: session_id_formatted {
+    type: string
+    sql: ${TABLE}.session_id ;;
+    hidden: yes
+    html: {% if selected_session._parameter_value == value  %}
+              <div style="border-radius:16px;background-color:#4285F4;margin:0.8rem;box-shadow: 0px 0px 4.7px 0px #4285F4, 0px 1px 12.6px 0px rgba(105, 162, 255, 0.60), 0px 0px 5.4px 0px rgba(66, 133, 244, 0.40), 0px 0px 154.5px 0px rgba(66, 133, 244, 0.60);">
+                <span style="padding:0.1rem;font-color:#0090FF;font-weight:bold;font-size:2rem;"> {{ rendered_value }}</span>
+              </div>
+          {% else %}
+            {{ value }}
+          {% endif %};;
+    description: "Unique identifier for the game session"
+    label: "Session ID Formatted"
   }
 
   dimension: client_id {
