@@ -380,6 +380,7 @@ view: sessions {
     sql: ${TABLE}.tool_used ;;
     description: "Average number of tool use across all sessions"
     label: "Average Tool Use"
+    value_format_name: decimal_2
   }
 
 
