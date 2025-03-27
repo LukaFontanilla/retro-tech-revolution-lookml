@@ -28,7 +28,8 @@ view: sessions {
         END AS reached_boss1,
         COUNTIF(event_type = 'on_trivia_question_received') AS trivia_questions_received,
         MAX(CASE WHEN event_type = 'on_player_moving' THEN 1 ELSE 0 END) AS player_moved,
-        MAX(CASE WHEN event_type = 'on_player_weapon_changed' THEN 1 ELSE 0 END) AS weapon_changed,
+        SUM(CASE WHEN event_type = 'on_weapon_changed' THEN 1 ELSE 0 END) AS tool_changed,
+        SUM(CASE WHEN event_type = 'on_bullet_created' THEN 1 ELSE 0 END) AS tool_used,
         MAX(CASE WHEN event_type = 'on_player_taking_damage' THEN 1 ELSE 0 END) AS took_damage
       FROM `retro_tech_revolution.v_all_events`
       GROUP BY 1, 2
@@ -40,6 +41,12 @@ view: sessions {
     suggest_dimension: session_id
     label: "Selected Game Session"
     type: string
+  }
+
+  dimension: selected_client_vs_rest_bool {
+    type: yesno
+    hidden: yes
+    sql: ${session_id} = {% parameter selected_session %} ;;
   }
 
   dimension: selected_client_vs_rest {
@@ -216,14 +223,6 @@ view: sessions {
     group_label: "Player Activity"
   }
 
-  dimension: weapon_changed {
-    type: yesno
-    sql: ${TABLE}.weapon_changed = 1 ;;
-    description: "Indicates if the player changed weapons during the session"
-    label: "Weapon Changed"
-    group_label: "Player Activity"
-  }
-
   dimension: took_damage {
     type: yesno
     sql: ${TABLE}.took_damage = 1 ;;
@@ -344,6 +343,15 @@ view: sessions {
     value_format_name: decimal_0
   }
 
+  measure: highest_score_selected_session {
+    type: max
+    sql: ${max_score} ;;
+    filters: [selected_client_vs_rest_bool: "yes"]
+    description: "Highest score achieved for selected session"
+    label: "Selected Session: Highest Score"
+    value_format_name: decimal_0
+  }
+
   measure: average_player_points {
     type: average
     sql: ${max_player_points} ;;
@@ -359,6 +367,21 @@ view: sessions {
     label: "Avg Enemies Defeated"
     value_format_name: decimal_1
   }
+
+  measure: average_tool_swap {
+    type: average
+    sql: ${TABLE}.tool_changed ;;
+    description: "Average number of tool swaps across all sessions"
+    label: "Average Tool Swap"
+  }
+
+  measure: average_tool_use {
+    type: average
+    sql: ${TABLE}.tool_used ;;
+    description: "Average number of tool use across all sessions"
+    label: "Average Tool Use"
+  }
+
 
   measure: total_enemies_defeated {
     type: sum
