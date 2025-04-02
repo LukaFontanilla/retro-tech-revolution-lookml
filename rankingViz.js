@@ -88,7 +88,7 @@ looker.plugins.visualizations.add({
           padding: 10px 25px; /* Adjust padding inside the box */
           border-radius: 15px; /* Default */
           border: 4px solid #34A853; /* Default */
-          background-color: #424242; /* Default */
+          background-color: transparent; /* Default */
           width: 100%;
           height: 100%;
           /* Glow will be applied via JS */
