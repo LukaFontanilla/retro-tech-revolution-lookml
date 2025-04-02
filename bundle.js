@@ -137,6 +137,7 @@ looker.plugins.visualizations.add({
     // Create container elements
     this.container = element.appendChild(document.createElement("div"));
     this.container.className = "markdown-visualization";
+    this.container.appendChild("<img src="https://i.ibb.co/pvnCHhPz/gemini-logo.png" alt="gemini-logo" border="0">")
 
     // Create style element for custom styling
     this.styleElement = document.createElement("style");
@@ -242,6 +243,7 @@ looker.plugins.visualizations.add({
         ${config.content_max_width > 0 ? `max-width: ${config.content_max_width}px; margin: 0 auto;` : ''}
         overflow-wrap: break-word;
         word-wrap: break-word;
+        text-shadow = `0 0 10px ${config.text_color}`;
       }
 
       .markdown-visualization h1 {
