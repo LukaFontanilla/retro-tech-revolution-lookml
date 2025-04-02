@@ -1,7 +1,7 @@
 // Combined Status Indicator Visualization for Looker
 looker.plugins.visualizations.add({
-  id: "status_indicator",
-  label: "Status Indicator",
+  id: "status_indicator_glow", // Changed ID slightly to avoid conflicts if you have the old one
+  label: "Status Indicator (Glow)", // Updated label
   options: {
     indicator_type: {
       type: "string",
@@ -9,45 +9,52 @@ looker.plugins.visualizations.add({
       display: "select",
       values: [
         {"Time": "time"},
-        {"Rank": "rank"},
+        {"Rank": "rank"}, // Defaulting to Rank (green) to match the image style initially
         {"Enemies Defeated": "enemies"}
       ],
-      default: "time"
+      default: "rank" // Default to Rank (green)
+    },
+    indicator_background_color: { // Renamed from background_color for clarity
+        type: "string",
+        label: "Indicator Background Color",
+        default: "#424242", // Dark grey like the image
+        display_size: "half"
     },
     font_size: {
       type: "string",
       label: "Font Size",
-      default: "28px"
+      default: "48px" // Increased default size to be closer to image proportion
     },
     font_color: {
       type: "string",
-      label: "Font Color",
-      default: "#F2B01E", // Default to yellow (time)
+      label: "Color (Icon, Text, Border, Glow)", // Simplified color - one color for all
+      default: "#34A853", // Default to green (rank)
       display_size: "half"
     },
-    background_color: {
-      type: "string",
-      label: "Background Color",
-      default: "#FFFFFF",
-      display_size: "half"
-    },
-    border_color: {
-      type: "string",
-      label: "Border Color",
-      default: "#F2B01E", // Default to yellow (time)
-      display_size: "half"
-    },
+    // Removed separate border_color and background_color as they are derived or distinct
     border_radius: {
       type: "number",
       label: "Border Radius",
-      default: 10,
+      default: 15, // Slightly more rounded
       display_size: "half"
     },
     border_width: {
       type: "number",
       label: "Border Width",
-      default: 10,
+      default: 4, // Thinner solid border, glow adds visual weight
       display_size: "half"
+    },
+    glow_blur: {
+        type: "number",
+        label: "Glow Blur (px)",
+        default: 10,
+        display_size: "half"
+    },
+    glow_spread: {
+        type: "number",
+        label: "Glow Spread (px)",
+        default: 2,
+        display_size: "half"
     },
     custom_value_format: {
       type: "string",
@@ -59,31 +66,35 @@ looker.plugins.visualizations.add({
   create: function(element, config) {
     element.innerHTML = `
       <style>
-        .status-indicator-container {
+        /* Basic reset/box-sizing */
+        .status-indicator-glow-vis,
+        .status-indicator-glow-vis * {
+            box-sizing: border-box;
+        }
+        .status-indicator-glow-vis {
           height: 100%;
           width: 100%;
           display: flex;
           justify-content: center;
           align-items: center;
-          padding: 8px;
-          box-sizing: border-box;
-          filter:  drop-shadow(0px 0px 4.2px rgba(0,0,0,0.50)) drop-shadow(0px 0px 3.2px #1F1A22);
+          padding: 15px; /* Add padding to ensure glow isn't cut off */
+          overflow: hidden; /* Prevent potential overflow issues */
         }
         .status-indicator {
           display: flex;
           align-items: center;
-          justify-content: center;
-          padding: 10px 20px;
-          border-radius: 10px;
-          border: 2px solid #F2B01E;
-          background-color: white;
+          justify-content: center; /* Center content */
+          gap: 15px; /* Space between icon and value */
+          padding: 10px 25px; /* Adjust padding inside the box */
+          border-radius: 15px; /* Default */
+          border: 4px solid #34A853; /* Default */
+          background-color: #424242; /* Default */
           width: 100%;
           height: 100%;
-          box-sizing: border-box;
+          /* Glow will be applied via JS */
         }
         .status-icon {
-          margin-right: 15px;
-          background-color: #F2B01E;
+          background-color: #34A853; /* Default */
           mask-size: contain;
           mask-repeat: no-repeat;
           mask-position: center;
@@ -91,125 +102,157 @@ looker.plugins.visualizations.add({
           -webkit-mask-repeat: no-repeat;
           -webkit-mask-position: center;
           /* Icon will scale with font size */
-          width: 1em;
-          height: 1em;
+          width: 1em; /* Relative to parent font-size */
+          height: 1em; /* Relative to parent font-size */
           flex-shrink: 0;
+           /* Glow will be applied via JS */
         }
         .status-value {
-          font-size: 28px;
+          font-size: 48px; /* Default */
           font-weight: bold;
-          color: #F2B01E;
-          font-family: Arial, sans-serif;
+          color: #34A853; /* Default */
+          font-family: 'Arial', sans-serif; /* Example font */
           display: flex;
           align-items: center;
+          line-height: 1; /* Ensure text aligns well vertically */
+           /* Glow will be applied via JS */
         }
+        /* Specific icon paths */
+        .icon-time {
+             /* Clock icon SVG */
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm-1-13v5h5v2h-7V7h2z' fill='currentColor'/%3E%3C/svg%3E");
+            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm-1-13v5h5v2h-7V7h2z' fill='currentColor'/%3E%3C/svg%3E");
+        }
+        .icon-rank {
+             /* Star icon SVG */
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l3.1 6.3 6.9.9-5 4.9 1.2 6.9-6.2-3.3-6.2 3.3 1.2-6.9-5-4.9 6.9-.9z' fill='currentColor'/%3E%3C/svg%3E");
+            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l3.1 6.3 6.9.9-5 4.9 1.2 6.9-6.2-3.3-6.2 3.3 1.2-6.9-5-4.9 6.9-.9z' fill='currentColor'/%3E%3C/svg%3E");
+        }
+        .icon-enemies {
+            /* Robot icon SVG */
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M22 14h-1c0-3.9-3.1-7-7-7h-4c-3.9 0-7 3.1-7 7h-1c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h1v1c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-1h1c1.1 0 2-.9 2-2v-2c0-1.1-.9-2-2-2zm-15 0c0-2.8 2.2-5 5-5h4c2.8 0 5 2.2 5 5v2h-14v-2zm-2 4h18v2h-18v-2zm7-14c-1.7 0-3 1.3-3 3h2c0-.6.4-1 1-1s1 .4 1 1h2c0-1.7-1.3-3-3-3zm6 3c0-1.7-1.3-3-3-3v2c.6 0 1 .4 1 1h2z' fill='currentColor'/%3E%3Ccircle cx='9' cy='14' r='1'/%3E%3Ccircle cx='15' cy='14' r='1'/%3E%3C/svg%3E");
+             -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M22 14h-1c0-3.9-3.1-7-7-7h-4c-3.9 0-7 3.1-7 7h-1c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h1v1c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-1h1c1.1 0 2-.9 2-2v-2c0-1.1-.9-2-2-2zm-15 0c0-2.8 2.2-5 5-5h4c2.8 0 5 2.2 5 5v2h-14v-2zm-2 4h18v2h-18v-2zm7-14c-1.7 0-3 1.3-3 3h2c0-.6.4-1 1-1s1 .4 1 1h2c0-1.7-1.3-3-3-3zm6 3c0-1.7-1.3-3-3-3v2c.6 0 1 .4 1 1h2z' fill='currentColor'/%3E%3Ccircle cx='9' cy='14' r='1'/%3E%3Ccircle cx='15' cy='14' r='1'/%3E%3C/svg%3E");
+        }
+
       </style>
-      <div class="status-indicator-container">
+      <div class="status-indicator-glow-vis">
         <div class="status-indicator">
           <div class="status-icon"></div>
           <div class="status-value"></div>
         </div>
       </div>
     `;
-
-    this.container = element.querySelector('.status-indicator-container');
+    // Select elements
+    // Use more specific selectors if needed, but these should work within the vis scope
+    this.container = element.querySelector('.status-indicator-glow-vis');
     this.indicator = element.querySelector('.status-indicator');
     this.icon = element.querySelector('.status-icon');
     this.value = element.querySelector('.status-value');
   },
 
   updateAsync: function(data, element, config, queryResponse, details, done) {
-    if (!data || data.length === 0) {
-      this.value.textContent = "No data";
+    // Clear any previous errors or states
+    this.clearErrors();
+
+    // Handle no data
+    if (!data || data.length === 0 || !queryResponse.fields.measure_like[0]) {
+       if (this.addError) {
+            this.addError({title: "No data", message: "This chart requires one measure."});
+       } else {
+            console.error("No data or measure found for Status Indicator Glow");
+            // Display a fallback message if addError isn't available (older Looker?)
+            element.innerHTML = "<div style='padding:10px; text-align: center;'>No data</div>";
+       }
       done();
       return;
     }
 
-    // Determine indicator type and set colors appropriately
-    const indicatorType = config.indicator_type || "time";
+    // --- Configuration Processing ---
+    const indicatorType = config.indicator_type || "rank"; // Default to rank
 
-    // Set default colors based on indicator type
-    let defaultColor = "#F2B01E"; // Yellow for time
-    let defaultGlow = "0px 0px 128px 25px rgba(52,168,83,0.9);"
-
-    if (indicatorType === "rank") {
-      defaultColor = "#4CAF50"; // Green for rank
-      this.indicator.style.webkitBoxShadow = "0px 0px 128px 25px rgba(52,168,83,0.9)";
-      this.indicator.style.mozBoxShadow = "0px 0px 128px 25px rgba(52,168,83,0.9)";
-      this.indicator.style.boxShadow = "0px 0px 128px 25px rgba(52,168,83,0.9)";
-    } else if (indicatorType === "enemies") {
-      defaultColor = "#E53935"; // Red for enemies defeated
-    }
-
-    // Apply configuration options with appropriate defaults
-    const fontColor = config.font_color || defaultColor;
-    const borderColor = config.border_color || defaultColor;
-    const fontSize = config.font_size || "28px";
-
-    this.indicator.style.borderRadius = `${config.border_radius || 10}px`;
-    this.indicator.style.borderWidth = `${config.border_width || 10}px`;
-    this.indicator.style.borderColor = borderColor;
-    this.indicator.style.backgroundColor = config.background_color || "#FFFFFF";
-    this.value.style.color = fontColor;
-    this.value.style.fontSize = fontSize;
-    this.icon.style.backgroundColor = fontColor;
-
-    // Make both the value and icon use the same font size for proportional scaling
-    this.indicator.style.fontSize = fontSize;
-
-    // Clock icon SVG - simpler version
-    const clockIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm-1-13v5h5v2h-7V7h2z"/></svg>`;
-
-    // Star icon SVG - simpler version
-    const starIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3.1 6.3 6.9.9-5 4.9 1.2 6.9-6.2-3.3-6.2 3.3 1.2-6.9-5-4.9 6.9-.9z"/></svg>`;
-
-    // Robot icon SVG
-    const robotIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22 14h-1c0-3.9-3.1-7-7-7h-4c-3.9 0-7 3.1-7 7h-1c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h1v1c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-1h1c1.1 0 2-.9 2-2v-2c0-1.1-.9-2-2-2zm-15 0c0-2.8 2.2-5 5-5h4c2.8 0 5 2.2 5 5v2h-14v-2zm-2 4h18v2h-18v-2zm7-14c-1.7 0-3 1.3-3 3h2c0-.6.4-1 1-1s1 .4 1 1h2c0-1.7-1.3-3-3-3zm6 3c0-1.7-1.3-3-3-3v2c.6 0 1 .4 1 1h2z"/><circle cx="9" cy="14" r="1"/><circle cx="15" cy="14" r="1"/></svg>`;
-
-    // Set the appropriate icon based on indicator type
-    let iconSvg;
+    // Determine default color based on type if main color isn't set
+    let typeDefaultColor = "#34A853"; // Green for rank (default)
     if (indicatorType === "time") {
-      iconSvg = clockIcon;
-    } else if (indicatorType === "rank") {
-      iconSvg = starIcon;
+      typeDefaultColor = "#F2B01E"; // Yellow for time
     } else if (indicatorType === "enemies") {
-      iconSvg = robotIcon;
+      typeDefaultColor = "#E53935"; // Red for enemies
     }
 
-    // Set the icon as a data URL
-    const dataUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(iconSvg)}`;
-    this.icon.style.maskImage = `url('${dataUrl}')`;
-    this.icon.style.webkitMaskImage = `url('${dataUrl}')`;
+    // Use configured color, or fall back to type-based default
+    const mainColor = config.font_color || typeDefaultColor;
+    const indicatorBgColor = config.indicator_background_color || "#424242"; // Dark grey default
+    const fontSize = config.font_size || "48px";
+    const borderRadius = `${config.border_radius || 15}px`;
+    const borderWidth = `${config.border_width || 4}px`;
+    const glowBlur = `${config.glow_blur || 10}px`;
+    const glowSpread = `${config.glow_spread || 2}px`;
 
-    // Get the value from the data
+
+    // --- Apply Styles ---
+
+    // Indicator Box (Border, Background, Font Size Base, Border Glow)
+    this.indicator.style.backgroundColor = indicatorBgColor;
+    this.indicator.style.borderColor = mainColor;
+    this.indicator.style.borderWidth = borderWidth;
+    this.indicator.style.borderRadius = borderRadius;
+    this.indicator.style.fontSize = fontSize; // Set base font size here for icon scaling
+     // Apply border glow using box-shadow
+    this.indicator.style.boxShadow = `0 0 ${glowBlur} ${glowSpread} ${mainColor}`;
+
+    // Icon (Color, Icon Type, Icon Glow)
+    this.icon.style.backgroundColor = mainColor; // Icon color itself
+    // Remove previous icon class
+    this.icon.classList.remove('icon-time', 'icon-rank', 'icon-enemies');
+    // Add current icon class (styles defined in CSS)
+    this.icon.classList.add(`icon-${indicatorType}`);
+    // Apply icon glow using filter: drop-shadow
+    this.icon.style.filter = `drop-shadow(0 0 ${glowBlur} ${mainColor})`; // Spread isn't directly supported in drop-shadow
+
+    // Value (Text Color, Text Glow)
+    this.value.style.color = mainColor;
+    // Font size is inherited from .status-indicator now
+    // Apply text glow using text-shadow
+    this.value.style.textShadow = `0 0 ${glowBlur} ${mainColor}`; // Spread isn't directly supported in text-shadow
+
+
+    // --- Data Processing & Display ---
     let value;
     try {
-      value = data[0][queryResponse.fields.measure_like[0].name].value;
+      // Get the first measure value from the first row
+      const measureName = queryResponse.fields.measure_like[0].name;
+      value = data[0][measureName].value;
     } catch (e) {
-      console.error("Error accessing data value:", e);
+       if (this.addError) {
+            this.addError({title: "Data Error", message: "Could not retrieve value from data."});
+       } else {
+            console.error("Error accessing data value:", e);
+       }
       value = "Error";
     }
 
-    // Format the value based on indicator type
+    // Format the value
     let formattedValue = '';
-
-    if (config.custom_value_format) {
-      // Use custom format if provided
+    if (value === "Error" || value === undefined || value === null) {
+        formattedValue = "N/A";
+    } else if (config.custom_value_format) {
+      // Use custom format if provided - simple replacement
       formattedValue = config.custom_value_format.replace(/\{value\}/g, value);
     } else if (indicatorType === "time" && typeof value === 'number') {
       // Format time in seconds to MM:SS.SSS format
-      const minutes = Math.floor(value / 60);
-      const seconds = Math.floor(value % 60);
-      const milliseconds = Math.floor((value % 1) * 1000);
+      const totalSeconds = value;
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = Math.floor(totalSeconds % 60);
+      const milliseconds = Math.round((totalSeconds % 1) * 1000); // Use Math.round for cleaner ms
 
       formattedValue = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${milliseconds.toString().padStart(3, '0')}`;
     } else {
-      // For rank or non-numeric values, just convert to string
-      formattedValue = value !== undefined ? value.toString() : "N/A";
+      // For rank, enemies, or non-numeric/non-time values, just convert to string
+      formattedValue = value.toString();
     }
 
     this.value.textContent = formattedValue;
 
+    // Signal completion
     done();
   }
 });
