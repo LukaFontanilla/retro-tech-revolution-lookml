@@ -131,8 +131,8 @@ view: events {
 
   dimension: new_difficulty {
     type: string
-    sql: ${TABLE}.new_difficulty ;;
-    description: "Current game difficulty setting"
+    sql: CASE WHEN ${TABLE}.new_difficulty = "0" THEN "Beginner" WHEN ${TABLE}.new_difficulty = "1" THEN "Intermmediate" ELSE "Advanced" END ;;
+    description: "Current game difficulty setting. 0 = Beginner, 1 = Intermmediate, 2 = Advanced"
     label: "Difficulty Level"
   }
 

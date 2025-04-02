@@ -46,3 +46,5 @@ explore: sessions {
     relationship: one_to_many
   }
 }
+
+explore: game_play_summaries {}
