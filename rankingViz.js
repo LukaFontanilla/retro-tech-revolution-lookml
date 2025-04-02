@@ -130,9 +130,13 @@ looker.plugins.visualizations.add({
 
     // Set default colors based on indicator type
     let defaultColor = "#F2B01E"; // Yellow for time
+    let defaultGlow = "0px 0px 128px 25px rgba(52,168,83,0.9);"
 
     if (indicatorType === "rank") {
       defaultColor = "#4CAF50"; // Green for rank
+      this.indicator.style.webkitBoxShadow = "0px 0px 128px 25px rgba(52,168,83,0.9)";
+      this.indicator.style.mozBoxShadow = "0px 0px 128px 25px rgba(52,168,83,0.9)";
+      this.indicator.style.boxShadow = "0px 0px 128px 25px rgba(52,168,83,0.9)";
     } else if (indicatorType === "enemies") {
       defaultColor = "#E53935"; // Red for enemies defeated
     }
