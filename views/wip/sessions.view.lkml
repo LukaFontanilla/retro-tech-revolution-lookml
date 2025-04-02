@@ -89,7 +89,7 @@ view: sessions {
     0 0 25px rgba(57, 255, 20, 0.7); /* Wider, slightly transparent glow */
     ">
     <span style=" /* Star Styling */
-    font-size: 2rem; /* Adjust size as needed */
+    font-size: 1.2rem; /* Adjust size as needed */
     line-height: 1; /* Prevent extra vertical space */
     color: #90EE90; /* Lighter green for the star itself */
     /* --- Green Text Glow --- */
@@ -101,7 +101,7 @@ view: sessions {
     <span style=" /* Text Styling */
     color: #90EE90; /* Lighter green for text */
     font-weight: bold;
-    font-size: 2rem; /* Matching star size */
+    font-size: 1.2rem; /* Matching star size */
     font-family: 'Courier New', monospace; /* Optional: Monospace font for number look */
     line-height: 1; /* Prevent extra vertical space */
     /* --- Green Text Glow --- */
