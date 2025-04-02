@@ -67,6 +67,7 @@ looker.plugins.visualizations.add({
           align-items: center;
           padding: 8px;
           box-sizing: border-box;
+          filter:  drop-shadow(0px 0px 4.2px rgba(0,0,0,0.50)) drop-shadow(0px 0px 3.2px #1F1A22);
         }
         .status-indicator {
           display: flex;
