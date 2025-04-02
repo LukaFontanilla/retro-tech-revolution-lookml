@@ -137,7 +137,7 @@ looker.plugins.visualizations.add({
     // Create container elements
     this.container = element.appendChild(document.createElement("div"));
     this.container.className = "markdown-visualization";
-    this.container.appendChild("<img src="https://i.ibb.co/pvnCHhPz/gemini-logo.png" alt="gemini-logo" border="0">")
+    this.container.appendChild('<img src="https://i.ibb.co/pvnCHhPz/gemini-logo.png" alt="gemini-logo" border="0">');
 
     // Create style element for custom styling
     this.styleElement = document.createElement("style");
