@@ -48,3 +48,4 @@ explore: sessions {
 }
 
 explore: game_play_summaries {}
+explore: screenshots {}

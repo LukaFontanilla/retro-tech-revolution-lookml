@@ -76,6 +76,8 @@ view: sessions {
     html: {% if selected_session._parameter_value == value %}
     <div style="
     background-color: transparent; /* Dark background */
+    display:flex;
+    flex-direction: row;
     border-radius: 10px; /* Rounded corners */
     padding: 8px 15px; /* Padding inside the box */
     margin: 0.8rem; /* Existing margin */
