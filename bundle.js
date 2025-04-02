@@ -243,7 +243,7 @@ looker.plugins.visualizations.add({
         ${config.content_max_width > 0 ? `max-width: ${config.content_max_width}px; margin: 0 auto;` : ''}
         overflow-wrap: break-word;
         word-wrap: break-word;
-        text-shadow = `0 0 10px ${config.text_color}`;
+        text-shadow: `0 0 10px ${config.text_color}`;
       }
 
       .markdown-visualization h1 {
