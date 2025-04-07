@@ -161,10 +161,11 @@ view: sessions {
   }
 
   dimension: max_score {
+    hidden: yes
     type: number
     sql: ${TABLE}.max_score ;;
     description: "Maximum score achieved in the session"
-    label: "Max Score"
+    label: "Max Score: dimension"
   }
 
   dimension: score_tier {
@@ -381,8 +382,8 @@ view: sessions {
   measure: average_score {
     type: average
     sql: ${max_score} ;;
-    description: "Average max score per session"
-    label: "Avg Max Score"
+    description: "Max score per session"
+    label: "Max Score"
     value_format_name: decimal_0
   }
 
