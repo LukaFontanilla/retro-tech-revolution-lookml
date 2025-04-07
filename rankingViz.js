@@ -211,6 +211,7 @@ looker.plugins.visualizations.add({
     // Value (Text Color, Text Glow)
     this.value.style.color = mainColor;
     // Font size is inherited from .status-indicator now
+    this.value.style.fontSize = fontSize;
     // Apply text glow using text-shadow
     this.value.style.textShadow = `0 0 ${glowBlur} ${mainColor}`; // Spread isn't directly supported in text-shadow
 
