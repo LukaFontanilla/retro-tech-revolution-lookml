@@ -120,8 +120,8 @@ looker.plugins.visualizations.add({
         /* Specific icon paths */
         .icon-time {
              /* Clock icon SVG */
-            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm-1-13v5h5v2h-7V7h2z' fill='currentColor'/%3E%3C/svg%3E");
-            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm-1-13v5h5v2h-7V7h2z' fill='currentColor'/%3E%3C/svg%3E");
+            mask-image: url("https://i.ibb.co/XZvRzPDw/alarm.png");
+            -webkit-mask-image: url("https://i.ibb.co/XZvRzPDw/alarm.png");
         }
         .icon-rank {
              /* Star icon SVG */
