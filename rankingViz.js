@@ -129,9 +129,7 @@ looker.plugins.visualizations.add({
             -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l3.1 6.3 6.9.9-5 4.9 1.2 6.9-6.2-3.3-6.2 3.3 1.2-6.9-5-4.9 6.9-.9z' fill='currentColor'/%3E%3C/svg%3E");
         }
         .icon-enemies {
-            /* Robot icon SVG */
-            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M22 14h-1c0-3.9-3.1-7-7-7h-4c-3.9 0-7 3.1-7 7h-1c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h1v1c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-1h1c1.1 0 2-.9 2-2v-2c0-1.1-.9-2-2-2zm-15 0c0-2.8 2.2-5 5-5h4c2.8 0 5 2.2 5 5v2h-14v-2zm-2 4h18v2h-18v-2zm7-14c-1.7 0-3 1.3-3 3h2c0-.6.4-1 1-1s1 .4 1 1h2c0-1.7-1.3-3-3-3zm6 3c0-1.7-1.3-3-3-3v2c.6 0 1 .4 1 1h2z' fill='currentColor'/%3E%3Ccircle cx='9' cy='14' r='1'/%3E%3Ccircle cx='15' cy='14' r='1'/%3E%3C/svg%3E");
-             -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M22 14h-1c0-3.9-3.1-7-7-7h-4c-3.9 0-7 3.1-7 7h-1c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h1v1c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-1h1c1.1 0 2-.9 2-2v-2c0-1.1-.9-2-2-2zm-15 0c0-2.8 2.2-5 5-5h4c2.8 0 5 2.2 5 5v2h-14v-2zm-2 4h18v2h-18v-2zm7-14c-1.7 0-3 1.3-3 3h2c0-.6.4-1 1-1s1 .4 1 1h2c0-1.7-1.3-3-3-3zm6 3c0-1.7-1.3-3-3-3v2c.6 0 1 .4 1 1h2z' fill='currentColor'/%3E%3Ccircle cx='9' cy='14' r='1'/%3E%3Ccircle cx='15' cy='14' r='1'/%3E%3C/svg%3E");
+
         }
 
       </style>
