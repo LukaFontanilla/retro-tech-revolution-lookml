@@ -176,12 +176,12 @@ view: sessions {
     label: "Score Tier"
   }
 
-  dimension: max_player_points {
-    type: number
-    sql: ${TABLE}.max_player_points ;;
-    description: "Maximum player points achieved in the session"
-    label: "Max Player Points"
-  }
+  # dimension: max_player_points {
+  #   type: number
+  #   sql: ${TABLE}.max_player_points ;;
+  #   description: "Maximum player points achieved in the session"
+  #   label: "Max Player Points"
+  # }
 
   dimension: enemies_defeated {
     type: number
@@ -403,13 +403,13 @@ view: sessions {
     value_format_name: decimal_0
   }
 
-  measure: average_player_points {
-    type: average
-    sql: ${max_player_points} ;;
-    description: "Average max player points per session"
-    label: "Avg Max Player Points"
-    value_format_name: decimal_0
-  }
+  # measure: average_player_points {
+  #   type: average
+  #   sql: ${max_player_points} ;;
+  #   description: "Average max player points per session"
+  #   label: "Avg Max Player Points"
+  #   value_format_name: decimal_0
+  # }
 
   measure: average_enemies_defeated {
     type: average
