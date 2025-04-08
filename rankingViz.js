@@ -198,10 +198,10 @@ looker.plugins.visualizations.add({
     this.indicator.style.boxShadow = `0 0 ${glowBlur} ${glowSpread} ${mainColor}`;
 
     // Icon (Color, Icon Type, Icon Glow)
+    this.icon.classList.remove('icon-time', 'icon-rank', 'icon-enemies');
     if(indicatorType !== "enemies") {
       this.icon.style.backgroundColor = mainColor; // Icon color itself
       // Remove previous icon class
-      this.icon.classList.remove('icon-time', 'icon-rank', 'icon-enemies');
       // Add current icon class (styles defined in CSS)
       this.icon.classList.add(`icon-${indicatorType}`);
       // Apply icon glow using filter: drop-shadow
