@@ -206,6 +206,8 @@ looker.plugins.visualizations.add({
       this.icon.classList.add(`icon-${indicatorType}`);
       // Apply icon glow using filter: drop-shadow
       this.icon.style.filter = `drop-shadow(0 0 ${glowBlur} ${mainColor})`; // Spread isn't directly supported in drop-shadow
+    } else {
+      this.icon.classList.remove('status-icon')
     }
 
     // Value (Text Color, Text Glow)
