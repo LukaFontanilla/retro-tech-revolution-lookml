@@ -41,6 +41,7 @@ view: sessions {
     suggest_dimension: session_id
     label: "Selected Game Session"
     type: unquoted
+    suggest_persist_for: "0 seconds"
   }
 
   dimension: selected_client_vs_rest_bool {
@@ -67,6 +68,7 @@ view: sessions {
     #         ;;
     description: "Unique identifier for the game session"
     label: "Session ID"
+    suggest_persist_for: "0 seconds"
   }
 
   dimension: session_id_formatted {
