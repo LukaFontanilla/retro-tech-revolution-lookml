@@ -129,7 +129,7 @@ looker.plugins.visualizations.add({
             -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l3.1 6.3 6.9.9-5 4.9 1.2 6.9-6.2-3.3-6.2 3.3 1.2-6.9-5-4.9 6.9-.9z' fill='currentColor'/%3E%3C/svg%3E");
         }
         .icon-enemies {
-
+            background-color: transparent;
         }
 
       </style>
@@ -198,13 +198,15 @@ looker.plugins.visualizations.add({
     this.indicator.style.boxShadow = `0 0 ${glowBlur} ${glowSpread} ${mainColor}`;
 
     // Icon (Color, Icon Type, Icon Glow)
-    this.icon.style.backgroundColor = mainColor; // Icon color itself
-    // Remove previous icon class
-    this.icon.classList.remove('icon-time', 'icon-rank', 'icon-enemies');
-    // Add current icon class (styles defined in CSS)
-    this.icon.classList.add(`icon-${indicatorType}`);
-    // Apply icon glow using filter: drop-shadow
-    this.icon.style.filter = `drop-shadow(0 0 ${glowBlur} ${mainColor})`; // Spread isn't directly supported in drop-shadow
+    if(indicatorType !== "enemies") {
+      this.icon.style.backgroundColor = mainColor; // Icon color itself
+      // Remove previous icon class
+      this.icon.classList.remove('icon-time', 'icon-rank', 'icon-enemies');
+      // Add current icon class (styles defined in CSS)
+      this.icon.classList.add(`icon-${indicatorType}`);
+      // Apply icon glow using filter: drop-shadow
+      this.icon.style.filter = `drop-shadow(0 0 ${glowBlur} ${mainColor})`; // Spread isn't directly supported in drop-shadow
+    }
 
     // Value (Text Color, Text Glow)
     this.value.style.color = mainColor;
