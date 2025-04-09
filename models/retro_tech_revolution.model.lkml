@@ -10,7 +10,7 @@ include: "/views/wip/*.view.lkml"
 
 datagroup: retro_tech_revolution_default_datagroup {
   # sql_trigger: SELECT MAX(id) FROM etl_log;;
-  max_cache_age: "1 hour"
+  max_cache_age: "1 minute"
 }
 
 persist_with: retro_tech_revolution_default_datagroup
