@@ -38,7 +38,8 @@ view: sessions {
   }
 
   parameter: selected_session {
-    suggest_dimension: session_id
+    suggest_explore: latest_sessions
+    suggest_dimension: latest_session_ids
     label: "Selected Game Session"
     type: unquoted
     suggest_persist_for: "0 seconds"

@@ -50,3 +50,4 @@ explore: sessions {
 explore: game_play_summaries {}
 explore: screenshots {}
 explore: v_ranking {}
+explore: latest_sessions {}
