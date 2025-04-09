@@ -2,7 +2,7 @@ view: latest_sessions {
   derived_table: {
     sql:  SELECT
         session_id,
-        MIN(ts) AS session_start
+        MAX(ts) AS session_start
       FROM `retro_tech_revolution.v_all_events`
       GROUP BY 1
       ORDER BY 2 desc
