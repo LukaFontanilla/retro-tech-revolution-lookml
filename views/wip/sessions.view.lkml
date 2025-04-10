@@ -42,7 +42,7 @@ view: sessions {
     suggest_dimension: latest_session_ids
     label: "Selected Game Session"
     type: unquoted
-    suggest_persist_for: "0 seconds"
+    suggest_persist_for: "0 minutes"
   }
 
   dimension: selected_client_vs_rest_bool {
