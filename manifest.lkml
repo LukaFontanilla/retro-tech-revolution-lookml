@@ -1,23 +1,15 @@
 project_name: "retro_tech_revolution_demo"
 
-constant: vis_id {
-  value: "leaderboard-viz"
-  export: override_optional
-}
-constant: vis_label {
-  value: "Leaderboard"
-  export: override_optional
-}
 visualization: {
-  id: "@{vis_id}"
-  label: "@{vis_label}"
-  file: "rankingViz.js"
+  id: "leaderboard-viz"
+  label: "Leaderboard Stat"
+  file: "visualizations/rankingViz.js"
   dependencies: []
 }
 
 visualization: {
   id: "markdown-viz"
   label: "Markdown Visualization"
-  file: "bundle.js"
+  file: "visualizations/markdownViz.js"
   dependencies: ["https://cdn.jsdelivr.net/npm/marked/marked.min.js"]
 }

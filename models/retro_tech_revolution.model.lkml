@@ -3,7 +3,7 @@ connection: "default_bigquery_connection"
 
 # include all the views
 include: "/views/**/*.view.lkml"
-include: "/views/wip/*.view.lkml"
+include: "/views/main/*.view.lkml"
 
 # Datagroups define a caching policy for an Explore. To learn more,
 # use the Quick Help panel on the right to see documentation.
@@ -25,14 +25,6 @@ persist_with: retro_tech_revolution_default_datagroup
 # To create more sophisticated Explores that involve multiple views, you can use the join parameter.
 # Typically, join parameters require that you define the join type, join relationship, and a sql_on clause.
 # Each joined view also needs to define a primary key.
-
-explore: v_all_events {
-  join: session_start_end {
-    type: inner
-    relationship: many_to_one
-    sql_on: ${v_all_events.session_id} = ${session_start_end.v_all_events_session_id} AND ${v_all_events.client_id} = ${session_start_end.v_all_events_client_id} ;;
-  }
-}
 
 explore: sessions {
   join: events {

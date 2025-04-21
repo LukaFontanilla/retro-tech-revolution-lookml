@@ -1,51 +1,59 @@
-<h1><span style="color:#2d7eea">README - Your LookML Project</span></h1>
+# Retro Tech Revolution: LookML Data Dictionary
 
-<h2><span style="color:#2d7eea">LookML Overview</span></h2>
+## Overview
 
-LookML is a data modeling language for describing dimensions, fields, aggregates and relationships based on SQL.
+This LookML project provides a semantic layer for analyzing data from the "Retro Tech Revolution" game. It defines the dimensions and measures available for exploring game session data, player activity, and AI assistant (Gemini) usage. This README.md provides a high-level overview of the LookML structure, key views, and custom visualizations.
 
-LookML is powerful because it:
+## Table of Contents
 
-- **Is all about reusability**: Most data analysis requires the same work to be done over and over again. You extract
-raw data, prepare it, deliver an analysis... and then are never able touse any of that work again. This is hugely
-inefficient, since the next analysis often involves many of the same steps. With LookML, once you define a
-dimension or a measure, you continue to build on it, rather than having to rewrite it again and again.
-- **Empowers end users**:  The data model that data analysts and developers create in LookML condenses and
-encapsulates the complexity of SQL, it and lets analysts get the knowledge about what their data means out of
-their heads so others can use it. This enables non-technical users to do their jobs &mdash; building dashboards,
-drilling to row-level detail, and accessing complex metrics &mdash; without having to worry about what’s behind the curtain.
-- **Allows for data governance**: By defining business metrics in LookML, you can ensure that Looker is always a
-credible single source of truth.
+* [Views](#views)
+* [Explores](#explores)
+* [Custom Visualizations](#custom-visualizations)
+* [End Report and Capabilities](#end-report-and-capabilities)
+* [Analytics Pipeline Architecture](#analytics-pipeline-architecture)
 
-The Looker application uses a model written in LookML to construct SQL queries against a particular database that
-business analysts can [Explore](https://cloud.google.com/looker/docs/r/exploring-data) on. For an overview on the basics of LookML, see [What is LookML?](https://cloud.google.com/looker/docs/r/what-is-lookml)
+## Views
 
-<h2><span style="color:#2d7eea">Learn to Speak Looker</span></h2>
+The LookML project is organized into several views, each representing a table or derived table in the underlying database.
 
-A LookML project is a collection of LookML files that describes a set of related [views](https://cloud.google.com/looker/docs/r/terms/view-file), [models](https://cloud.google.com/looker/docs/r/terms/model-file), and [Explores](https://cloud.google.com/looker/docs/r/terms/explore).
-- A [view](https://cloud.google.com/looker/docs/r/terms/view-file) (.view files) contains information about how to access or calculate information from each table (or
-across multiple joined tables). Here you’ll typically define the view, its dimensions and measures, and its field sets.
-- A [model](https://cloud.google.com/looker/docs/r/terms/model-file) (.model file) contains information about which tables to use and how they should be joined together.
-Here you’ll typically define the model, its Explores, and its joins.
-- An [Explore](https://cloud.google.com/looker/docs/r/terms/explore) is the starting point for business users to query data, and it is the end result of the LookML you are
-writing. To see the Explores in this project, select an Explore from the Explore menu.
+* **events:** Captures individual game events, such as player actions, enemy interactions, and system events.  Key fields include `event_time`, `event_type`, `client_id`, `session_id`, `player_health`, `player_points`, enemy details, bullet type, difficulty changes, prompts, reasons, scores, and timestamps.  It also categorizes events and extracts screen names and Gemini interaction types.
+* **sessions:** Aggregates data at the game session level.  It is derived table that calculates session metrics like `session_start`, `session_end`, `session_duration_minutes`, `max_score`, `enemies_defeated`, `player_deaths`, Gemini interactions, and progression (`reached_level1`, `reached_boss1`).  It also calculates skill and engagement tiers.
+* **latest_sessions**: (Presumed) Likely provides a view of the most recent game sessions, potentially for real-time or near real-time analysis.
+* **screenshots**: (Presumed) Likely provides access to in-game screenshots captured during gameplay.  The `event_id` in the `events` view might be used to join with this view.
+* **v_ranking**: (Presumed) This view probably holds ranking information, possibly derived from player scores or other performance metrics.
+* **game_play_summaries**: (Presumed) Contains summarized data related to game play, potentially aggregating information from the `events` and `sessions` views.
+* **gemini_summary**: (Presumed) Provides a summary of Gemini AI usage, possibly including metrics on help requests and backstory interactions.
 
-<h2><span style="color:#2d7eea">Exploring Data</span></h2>
+## Explores
 
-Ad-hoc data discovery is one of Looker’s most powerful and unique features. As you evaluate use cases for your
-trial, consider what business areas you would like to explore. Open the Explore menu in the main navigation to see
-the Explores you are building.
+* **sessions:** This is the primary explore in the project, allowing users to analyze game sessions. It joins the `sessions` view, enabling analysis of session-level metrics.  Users can explore how player behavior and progression vary across sessions.  Key dimensions and measures from the `sessions` view are exposed for analysis.
 
-<h2><span style="color:#2d7eea">The Development Workflow</span></h2>
+## Custom Visualizations
 
-To support a multi-developer environment, Looker is integrated with Git for version control. Follow [these directions](https://cloud.google.com/looker/docs/r/develop/git-setup)
-to set up Git for your project. To edit LookML, expand the Develop drop-down and toggle on [Development Mode](https://cloud.google.com/looker/docs/r/terms/dev-mode). In
-Development Mode, changes you make to the LookML model exist only in your account until you commit the
-changes and push them to your production model.
+The project includes custom JavaScript visualizations to enhance data exploration:
 
-<h2><span style="color:#2d7eea">Additional Resources</span></h2>
+* **rankingViz.js:** Implements a custom leaderboard visualization. This visualization is used to display player rankings based on performance metrics (e.g., score, time).
+* **Markdown Visualization:** (bundle.js) Enables the use of Markdown within Looker dashboards and reports. This allows for richer text formatting, embedding images, and creating more informative content.  (Note: bundle.js suggests this is a packaged visualization, potentially containing more than just Markdown support).
 
-To learn more about LookML and how to develop visit:
-- [Looker User Guide](https://looker.com/guide)
-- [Looker Help Center](https://help.looker.com)
-- [Looker University](https://training.looker.com/)
+## End Report and Capabilities
+
+The end report provides a comprehensive view of player behavior and game session data.  Key capabilities include:
+
+* **Player Progression Analysis:** Track how players advance through the game (e.g., reaching levels, defeating bosses).
+* **Session Analysis**: Analyze session duration, player scores, and other session-level metrics.
+* **AI Assistant (Gemini) Usage:** Measure how players interact with the in-game AI assistant.
+* **Player Behavior:** Analyze player actions, such as movement, damage taken, and combat performance.
+* **Custom Leaderboards:** Visualize player rankings using the custom `rankingViz.js` visualization.
+* **Rich Reporting:** Use Markdown visualization to create more informative and visually appealing reports.
+* **Real-time Insights:** (Inferred) The `latest_sessions` view suggests the possibility of real-time or near real-time insights into current player activity.
+
+## Analytics Pipeline Architecture
+
+The analytics pipeline architecture can be described as follows:
+
+1.  **Game Data Source:** Game event data is generated by the "Retro Tech Revolution" game.  (The specific source is not detailed, but could be game logs, database, etc.).
+2.  **Data Ingestion:** Game event data is ingested into a data warehouse (`retro_tech_revolution.v_all_events`).
+3.  **Data Transformation:** The `sessions` view uses a derived table to aggregate data from the `events` table, calculating session-level metrics.  Other views likely perform additional transformations or aggregations.
+4.  **LookML Modeling:** LookML is used to define the semantic layer on top of the transformed data, creating views and explores.
+5.  **Data Exploration:** Looker users can explore the data using the defined explores and visualizations, including custom visualizations.
+6.  **Reporting and Dashboards:** Looker reports and dashboards provide insights into player behavior, game progression, and other key metrics.
