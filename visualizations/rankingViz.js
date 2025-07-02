@@ -148,7 +148,7 @@ looker.plugins.visualizations.add({
     this.value = element.querySelector('.status-value');
   },
 
-  updateAsync: function(data, element, config, queryResponse, details, done) {
+  updateAsync: function(data, element, config, queryResponse, adapterOptions, details, done) {
     // Clear any previous errors or states
     this.clearErrors();
 
@@ -164,6 +164,8 @@ looker.plugins.visualizations.add({
       done();
       return;
     }
+
+    console.log("Adapter Options: ", adapterOptions);
 
     // --- Configuration Processing ---
     const indicatorType = config.indicator_type || "rank"; // Default to rank
