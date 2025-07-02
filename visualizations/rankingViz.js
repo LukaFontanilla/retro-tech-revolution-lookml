@@ -165,7 +165,7 @@ looker.plugins.visualizations.add({
       return;
     }
 
-    console.log("Adapter Options: ", adapterOptions);
+    console.log("Adapter Options: ", adapterOptions, details);
 
     // --- Configuration Processing ---
     const indicatorType = config.indicator_type || "rank"; // Default to rank
