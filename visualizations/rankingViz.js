@@ -161,8 +161,7 @@ looker.plugins.visualizations.add({
             // Display a fallback message if addError isn't available (older Looker?)
             element.innerHTML = "<div style='padding:10px; text-align: center;'>No data</div>";
        }
-      done();
-      return;
+      return done();
     }
 
     // console.log("Adapter Options: ", adapterOptions, details);
@@ -232,7 +231,7 @@ looker.plugins.visualizations.add({
        if (this.addError) {
             this.addError({title: "Data Error", message: "Could not retrieve value from data."});
        } else {
-            console.error("Error accessing data value:", e);
+            console.error("Error accessing data value:",e);
        }
       value = "Error";
     }
@@ -260,6 +259,6 @@ looker.plugins.visualizations.add({
     this.value.textContent = formattedValue;
 
     // Signal completion
-    done();
+    return done();
   }
 });
