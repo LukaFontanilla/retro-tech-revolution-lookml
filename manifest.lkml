@@ -1,12 +1,12 @@
 project_name: "retro_tech_revolution_demo"
 
-# visualization: {
-#   id: "leaderboard-viz"
-#   label: "Leaderboard Stat"
-#   # file: "visualizations/rankingViz.js"
-#   dependencies: []
-#   url: "https://gistcdn.githack.com/LukaFontanilla/73ea6fc25243426eb46b2d13007159aa/raw/8d7ec22a50aefa44b07e88fcb1ebae7ef4af75a0/rankingViz.js?min=1"
-# }
+visualization: {
+  id: "leaderboard-viz"
+  label: "Leaderboard Stat"
+  # file: "visualizations/rankingViz.js"
+  dependencies: []
+  url: "https://gistcdn.githack.com/LukaFontanilla/73ea6fc25243426eb46b2d13007159aa/raw/8d7ec22a50aefa44b07e88fcb1ebae7ef4af75a0/rankingViz.js?min=1"
+}
 
 visualization: {
   id: "markdown-viz"
