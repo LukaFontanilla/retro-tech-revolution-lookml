@@ -5,7 +5,7 @@ visualization: {
   label: "Leaderboard Stat"
   # file: "visualizations/rankingViz.js"
   dependencies: []
-  url: "https://gistcdn.githack.com/LukaFontanilla/73ea6fc25243426eb46b2d13007159aa/raw/8d7ec22a50aefa44b07e88fcb1ebae7ef4af75a0/rankingViz.js?min=1"
+  url: "https://gistcdn.githack.com/LukaFontanilla/73ea6fc25243426eb46b2d13007159aa/raw/6030d21294df86e92530627c097f6a6efe35a1cb/rankingViz.js?min=1"
 }
 
 visualization: {
