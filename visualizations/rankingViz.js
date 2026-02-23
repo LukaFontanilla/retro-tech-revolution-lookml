@@ -148,7 +148,7 @@ looker.plugins.visualizations.add({
     this.value = element.querySelector('.status-value');
   },
 
-  updateAsync: function(data, element, config, queryResponse, adapterOptions, details, done) {
+  updateAsync: function(data, element, config, queryResponse, details, done) {
     // Clear any previous errors or states
     this.clearErrors();
 
