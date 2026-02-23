@@ -3,9 +3,9 @@ project_name: "retro_tech_revolution_demo"
 visualization: {
   id: "leaderboard-viz"
   label: "Leaderboard Stat"
-  # file: "visualizations/rankingViz.js"
+  file: "visualizations/rankingViz.js"
   dependencies: []
-  url: "https://gistcdn.githack.com/LukaFontanilla/73ea6fc25243426eb46b2d13007159aa/raw/6030d21294df86e92530627c097f6a6efe35a1cb/rankingViz.js?min=1"
+  # url: "https://gistcdn.githack.com/LukaFontanilla/73ea6fc25243426eb46b2d13007159aa/raw/6030d21294df86e92530627c097f6a6efe35a1cb/rankingViz.js?min=1"
 }
 
 visualization: {

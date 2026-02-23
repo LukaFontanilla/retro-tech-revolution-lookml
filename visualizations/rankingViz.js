@@ -17,43 +17,43 @@ looker.plugins.visualizations.add({
     indicator_background_color: { // Renamed from background_color for clarity
         type: "string",
         label: "Indicator Background Color",
-        default: "#424242", // Dark grey like the image
+        default: "#0a0a20", // Updated to match retro gaming theme
         display_size: "half"
     },
     font_size: {
       type: "string",
       label: "Font Size",
-      default: "48px" // Increased default size to be closer to image proportion
+      default: "3rem" // Scalable font sizing
     },
     font_color: {
       type: "string",
-      label: "Color (Icon, Text, Border, Glow)", // Simplified color - one color for all
-      default: "#34A853", // Default to green (rank)
+      label: "Color (Icon, Text, Border, Glow)",
+      default: "", // Default empty to cascade to types
       display_size: "half"
     },
     // Removed separate border_color and background_color as they are derived or distinct
     border_radius: {
       type: "number",
       label: "Border Radius",
-      default: 15, // Slightly more rounded
+      default: 12, // Match modern styling
       display_size: "half"
     },
     border_width: {
       type: "number",
       label: "Border Width",
-      default: 4, // Thinner solid border, glow adds visual weight
+      default: 3, // Refined solid border weight
       display_size: "half"
     },
     glow_blur: {
         type: "number",
         label: "Glow Blur (px)",
-        default: 10,
+        default: 15, // Enhanced for neon effect
         display_size: "half"
     },
     glow_spread: {
         type: "number",
         label: "Glow Spread (px)",
-        default: 2,
+        default: 1, // Softened spread
         display_size: "half"
     },
     custom_value_format: {
@@ -77,24 +77,24 @@ looker.plugins.visualizations.add({
           display: flex;
           justify-content: center;
           align-items: center;
-          padding: 15px; /* Add padding to ensure glow isn't cut off */
+          padding: 8px; /* Minimized padding to maximize real estate */
           overflow: hidden; /* Prevent potential overflow issues */
+          background-color: transparent;
         }
         .status-indicator {
           display: flex;
           align-items: center;
           justify-content: center; /* Center content */
           gap: 15px; /* Space between icon and value */
-          padding: 10px 25px; /* Adjust padding inside the box */
-          border-radius: 15px; /* Default */
-          border: 4px solid #34A853; /* Default */
-          background-color: transparent; /* Default */
+          padding: 10px 20px; /* Refined padding */
+          border-radius: 12px;
+          border-style: solid;
           width: 100%;
           height: 100%;
-          /* Glow will be applied via JS */
+          font-family: 'VT323', 'Outfit', 'Google Sans', sans-serif; /* Integrated brand fonts */
+          transition: all 0.3s ease; /* Fluid adjustments */
         }
         .status-icon {
-          background-color: #34A853; /* Default */
           mask-size: contain;
           mask-repeat: no-repeat;
           mask-position: center;
@@ -102,20 +102,16 @@ looker.plugins.visualizations.add({
           -webkit-mask-repeat: no-repeat;
           -webkit-mask-position: center;
           /* Icon will scale with font size */
-          width: 1em; /* Relative to parent font-size */
-          height: 1em; /* Relative to parent font-size */
+          width: 0.9em;
+          height: 0.9em;
           flex-shrink: 0;
-           /* Glow will be applied via JS */
         }
         .status-value {
-          font-size: 48px; /* Default */
-          font-weight: bold;
-          color: #34A853; /* Default */
-          font-family: 'Arial', sans-serif; /* Example font */
+          font-weight: 700;
           display: flex;
           align-items: center;
           line-height: 1; /* Ensure text aligns well vertically */
-           /* Glow will be applied via JS */
+          letter-spacing: 1px;
         }
         /* Specific icon paths */
         .icon-time {
@@ -130,6 +126,7 @@ looker.plugins.visualizations.add({
         }
         .icon-enemies {
             background-color: transparent;
+            display: none; /* Hide icon wrapper entirely for enemies */
         }
 
       </style>
@@ -140,8 +137,6 @@ looker.plugins.visualizations.add({
         </div>
       </div>
     `;
-    // Select elements
-    // Use more specific selectors if needed, but these should work within the vis scope
     this.container = element.querySelector('.status-indicator-glow-vis');
     this.indicator = element.querySelector('.status-indicator');
     this.icon = element.querySelector('.status-icon');
@@ -149,89 +144,77 @@ looker.plugins.visualizations.add({
   },
 
   updateAsync: function(data, element, config, queryResponse, details, done) {
-    // Clear any previous errors or states
     this.clearErrors();
 
-    // Handle no data
     if (!data || data.length === 0 || !queryResponse.fields.measure_like[0]) {
        if (this.addError) {
             this.addError({title: "No data", message: "This chart requires one measure."});
        } else {
             console.error("No data or measure found for Status Indicator Glow");
-            // Display a fallback message if addError isn't available (older Looker?)
             element.innerHTML = "<div style='padding:10px; text-align: center;'>No data</div>";
        }
       return done();
     }
 
-    // console.log("Adapter Options: ", adapterOptions, details);
-    // adapterOptions.onToggleSort({"add":true,"column":1,"desc":true})
+    const indicatorType = config.indicator_type || "rank";
 
-    // --- Configuration Processing ---
-    const indicatorType = config.indicator_type || "rank"; // Default to rank
-
-    // Determine default color based on type if main color isn't set
-    let typeDefaultColor = "#34A853"; // Green for rank (default)
+    // Determine default color based on type if main color isn't set, using theme specs
+    let typeDefaultColor = "#34A853";
     if (indicatorType === "time") {
-      typeDefaultColor = "#F2B01E"; // Yellow for time
+      typeDefaultColor = "#FFC107"; // Neon Amber/Yellow
+    } else if (indicatorType === "rank") {
+      typeDefaultColor = "#2ECC71"; // Neon Green
     } else if (indicatorType === "enemies") {
-      typeDefaultColor = "#E53935"; // Red for enemies
+      typeDefaultColor = "#E74C3C"; // Neon Red
     }
 
-    // Use configured color, or fall back to type-based default
     const mainColor = config.font_color || typeDefaultColor;
-    const indicatorBgColor = config.indicator_background_color || "#424242"; // Dark grey default
-    const fontSize = config.font_size || "48px";
-    const borderRadius = `${config.border_radius || 15}px`;
-    const borderWidth = `${config.border_width || 4}px`;
-    const glowBlur = `${config.glow_blur || 10}px`;
-    const glowSpread = `${config.glow_spread || 2}px`;
+    const indicatorBgColor = config.indicator_background_color || "#0a0a20";
+    const fontSize = config.font_size || "3rem";
+    const borderRadius = `${config.border_radius || 12}px`;
+    const borderWidth = `${config.border_width || 3}px`;
+    const glowBlur = `${config.glow_blur || 15}px`;
+    const glowSpread = `${config.glow_spread || 1}px`;
 
 
-    // --- Apply Styles ---
-
-    // Indicator Box (Border, Background, Font Size Base, Border Glow)
+    // Apply Styles
     this.indicator.style.backgroundColor = indicatorBgColor;
     this.indicator.style.borderColor = mainColor;
     this.indicator.style.borderWidth = borderWidth;
     this.indicator.style.borderRadius = borderRadius;
-    this.indicator.style.fontSize = fontSize; // Set base font size here for icon scaling
-     // Apply border glow using box-shadow
-    this.indicator.style.boxShadow = `0 0 ${glowBlur} ${glowSpread} ${mainColor}`;
+    this.indicator.style.fontSize = fontSize;
 
-    // Icon (Color, Icon Type, Icon Glow)
-    if(indicatorType !== "enemies") {
-      this.icon.style.backgroundColor = mainColor; // Icon color itself
-      // Remove previous icon class
-      // Add current icon class (styles defined in CSS)
-      this.icon.classList.remove('icon-time', 'icon-rank', 'icon-enemies');
+    // Outer neon glow
+    this.indicator.style.boxShadow = `0 0 ${glowBlur} ${glowSpread} ${mainColor}, inset 0 0 10px rgba(0,0,0,0.5)`;
+
+    // Reset Icon
+    this.icon.style.display = '';
+    this.icon.classList.remove('icon-time', 'icon-rank', 'icon-enemies');
+
+    if (indicatorType !== "enemies") {
+      this.icon.style.backgroundColor = mainColor;
       this.icon.classList.add(`icon-${indicatorType}`);
-      // Apply icon glow using filter: drop-shadow
-      this.icon.style.filter = `drop-shadow(0 0 ${glowBlur} ${mainColor})`; // Spread isn't directly supported in drop-shadow
+      this.icon.style.filter = `drop-shadow(0 0 ${glowBlur} ${mainColor})`;
     } else {
-      this.icon.classList.remove('icon-time', 'icon-rank', 'icon-enemies');
-      this.icon.classList.remove('status-icon')
+      this.icon.classList.add('icon-enemies');
+      this.icon.style.display = 'none'; // Ensure it collapses
     }
 
-    // Value (Text Color, Text Glow)
     this.value.style.color = mainColor;
-    // Font size is inherited from .status-indicator now
     this.value.style.fontSize = fontSize;
-    // Apply text glow using text-shadow
-    this.value.style.textShadow = `0 0 ${glowBlur} ${mainColor}`; // Spread isn't directly supported in text-shadow
+    this.value.style.textShadow = `0 0 ${glowBlur} ${mainColor}`;
 
 
-    // --- Data Processing & Display ---
+    // Data Processing & Display
     let value;
     try {
-      // Get the first measure value from the first row
       const measureName = queryResponse.fields.measure_like[0].name;
       value = data[0][measureName].value;
     } catch (e) {
        if (this.addError) {
             this.addError({title: "Data Error", message: "Could not retrieve value from data."});
        } else {
-            console.error("Error accessing data value:",e);
+            console.error("Error accessing data value:", e);
        }
       value = "Error";
     }
@@ -241,24 +224,20 @@ looker.plugins.visualizations.add({
     if (value === "Error" || value === undefined || value === null) {
         formattedValue = "N/A";
     } else if (config.custom_value_format) {
-      // Use custom format if provided - simple replacement
+      // Use custom format if provided
       formattedValue = config.custom_value_format.replace(/\{value\}/g, value);
     } else if (indicatorType === "time" && typeof value === 'number') {
-      // Format time in seconds to MM:SS.SSS format
       const totalSeconds = value;
       const minutes = Math.floor(totalSeconds / 60);
       const seconds = Math.floor(totalSeconds % 60);
-      const milliseconds = Math.round((totalSeconds % 1) * 1000); // Use Math.round for cleaner ms
+      const milliseconds = Math.round((totalSeconds % 1) * 1000);
 
       formattedValue = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${milliseconds.toString().padStart(3, '0')}`;
     } else {
-      // For rank, enemies, or non-numeric/non-time values, just convert to string
       formattedValue = value.toString();
     }
 
     this.value.textContent = formattedValue;
-
-    // Signal completion
-    return done();
+    done();
   }
 });
