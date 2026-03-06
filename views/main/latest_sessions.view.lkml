@@ -13,6 +13,7 @@ view: latest_sessions {
   dimension: latest_session_ids {
     type: string
     sql: ${TABLE}.session_id ;;
+    order_by_field: session_start_raw
     suggest_persist_for: "0 minutes"
   }
 
